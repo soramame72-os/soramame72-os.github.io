@@ -1,46 +1,493 @@
-<html>
-<link rel="icon" href="favicon.PNG" type="image/png">
+<!DOCTYPE html>
+<html lang="ja">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<meta http-equiv="Content-Style-Type" content="text/css">
-<meta name="GENERATOR" content="JustSystems Homepage Builder Version 20.0.6.0 for Windows">
-<title>Launcher</title>
-<style>
-  body {
-    font-family: "Times New Roman", "MS Mincho", serif;
-  }
-  .container {
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-  }
-  .profile {
-    width: 350px;
-  }
-  .news {
-    margin-left: 20px;
-  }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IWEB 1.0</title>
+  <style>
+    * {
+     box-sizing: border-box;
+      font-family: 'Helvetica Neue', 'Arial', sans-serif;
+      user-select: none;
+      -webkit-user-drag: none;
+      margin: 0;
+      padding: 0;
+    }
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #000;
+    }
+    .status-bar {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      height: 20px;
+      background: #000;
+      color: white;
+      font-size: 12px;
+      padding: 2px 10px;
+      display: flex;
+      justify-content: space-between;
+      z-index: 1000;
+    }
+    #lockScreen, #homeScreen {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.8s ease, transform 0.5s ease;
+    }
+    #lockScreen {
+      background-image: url('wallpaper-lock.png');
+      z-index: 10;
+    }
+    #homeScreen {
+      background-image: url('wallpaper-home.png');
+      display: none;
+      padding-top: 40px;
+      flex-wrap: nowrap;
+      justify-content: flex-start;
+      align-content: flex-start;
+      flex-direction: row;
+      align-items: flex-start;
+    }
+    lockScreen, #homeScreen {
+      width: 100%;
+      height: 100%;
+      background-size: cover;
+      background-position: center;
+    }
+    .lock-time {
+      color: white;
+      font-size: 60px;
+      font-weight: 100;
+      text-shadow: 0 0 10px black;
+      margin-bottom: 20px;
+    }
+    .slide-to-unlock {
+      position: absolute;
+      bottom: 50px;
+      width: 80%;
+      height: 40px;
+      border-radius: 20px;
+      border: 2px solid rgba(255, 255, 255, 0.7);
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      font-size: 14px;
+    }
+    .slider {
+      width: 50px;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.7);
+      text-align: center;
+      line-height: 40px;
+      color: #000;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .unlock-text {
+      flex: 1;
+      text-align: center;
+      opacity: 0.7;
+    }
+    .app {
+      width: 70px;
+      margin: 10px;
+      text-align: center;
+      font-size: 12px;
+      color: white;
+    }
+    .app img {
+      width: 60px;
+      height: 60px;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    }
+    .app:active img {
+      transform: scale(0.95);
+    }
+    .modal {
+      position: absolute;
+      width: 90%;
+      height: 80%;
+      top: 10%;
+      left: 5%;
+      background: white;
+      border-radius: 20px;
+      padding: 20px;
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 20;
+    }
+    .modal .close {
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      font-size: 20px;
+      cursor: pointer;
+    }
+    .notification-center, .control-center {
+      position: absolute;
+      width: 100%;
+      height: 50%;
+      left: 0;
+      background: rgba(50, 50, 50, 0.95);
+      color: white;
+      padding: 20px;
+      display: none;
+      z-index: 999;
+    }
+    .notification-center {
+      top: 0;
+    }
+    .control-center {
+      bottom: 0;
+    }
+    .dock {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      height: 90px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+      z-index: 9;
+    }
+    .dock .app {
+      margin: 0;
+    }
+#controlCenter, #notificationCenter {
+  position: fixed;
+  left: 0;
+  width: 100%;
+  height: 65%;
+  display: none;
+  background-color: rgba(0, 0, 0, 0.5); /* 半透明の背景 */
+  z-index: 999;
+  transition: transform 0.3s ease-in-out;
+}
+
+#controlCenter {
+  bottom: 0;
+  transform: translateY(100%); /* 初期位置（下から隠れている） */
+}
+
+#notificationCenter {
+  top: 0;
+  transform: translateY(-100%); /* 初期位置（上から隠れている） */
+}
+
+  </style>
 </head>
-<body background="./index_files/saved_resource" marginwidth="0" marginheight="0">
-<br>
-<h1 align="center">Launcher</h1>
-
-<div class="container">
-  <div class="profile">
-    <img src="img.jpg" width="350" height="414" border="0"><br><br>
-    <table width="256">
-      <tr>
-        <td width="14">&nbsp;</td>
-
-  <div class="Release">
-    <div align="center"><strong>--- Release ---</strong></div>
-    <hr width="100%" size="1">
-    <strong>・IWEB</strong><br>
-    <a href="https://soramame72-os.github.io/iweb1.0.html" target="_blank">ver1.0</a> <font color="#ff0000">New!</font><br>
-    Released on April 12, 2025<br>
+<body>
+  <div class="status-bar">
+    <div>soramame72</div>
+    <div id="statusTime">12:00</div>
+    <div>ver1.0</div>
   </div>
-</div>
 
+  <div id="lockScreen">
+    <div class="lock-time" id="lockTime">12:00</div>
+    <div class="slide-to-unlock" id="slider">
+      <div class="slider" id="sliderHandle">→</div>
+      <div class="unlock-text">スライドしてロック解除</div>
+    </div>
+  </div>
+
+  <div id="homeScreen">
+    <div class="app" onclick="openApp('Music')">
+      <img src="music.png" alt="Music"><div>Music</div>
+    </div>
+    <div class="app" onclick="openApp('Safari')">
+      <img src="safari.png" alt="Safari"><div>Safari</div>
+    </div>
+    <div class="app" onclick="openApp('Settings')">
+      <img src="setting.png" alt="Settings"><div>設定</div>
+    </div>
+    <div class="app" onclick="openApp('Game')">
+      <img src="games.png" alt="Game"><div>ゲーム</div>
+    </div>
+
+    <div class="dock" id="dock">
+      <div class="app" onclick="openApp('Music')">
+        <img src="music.png" alt="Music"><div>Music</div>
+      </div>
+      <div class="app" onclick="openApp('Safari')">
+        <img src="safari.png" alt="Safari"><div>Safari</div>
+      </div>
+      <div class="app" onclick="openApp('Settings')">
+        <img src="setting.png" alt="Settings"><div>設定</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="appModal">
+    <div class="close" onclick="closeApp()">×</div>
+    <h1 id="appTitle"></h1>
+    <div id="appContent"></div>
+  </div>
+
+  <div class="notification-cente" id="notificationCente">
+    <h2>通知センター</h2>
+  </div>
+  <div class="control-cente" id="controlCenter">
+    <h2>コントロールセンター</h2>
+  </div>
+
+  <script>
+    const lockScreen = document.getElementById('lockScreen');
+    const homeScreen = document.getElementById('homeScreen');
+    const sliderHandle = document.getElementById('sliderHandle');
+    const appModal = document.getElementById('appModal');
+    const appTitle = document.getElementById('appTitle');
+    const appContent = document.getElementById('appContent');
+    const statusTime = document.getElementById('statusTime');
+    const lockTime = document.getElementById('lockTime');
+    const dock = document.getElementById('dock');
+
+    function updateTime() {
+      const now = new Date();
+      const hh = now.getHours().toString().padStart(2, '0');
+      const mm = now.getMinutes().toString().padStart(2, '0');
+      statusTime.textContent = `${hh}:${mm}`;
+      lockTime.textContent = `${hh}:${mm}`;
+    }
+    setInterval(updateTime, 1000);
+    updateTime();
+
+    // スライダー処理（マウス/タッチ両対応）
+    let isDragging = false;
+    let startX = 0;
+
+    sliderHandle.addEventListener('mousedown', (e) => {
+      isDragging = true;
+      startX = e.clientX;
+    });
+
+    sliderHandle.addEventListener('touchstart', (e) => {
+      isDragging = true;
+      startX = e.touches[0].clientX;
+    });
+
+    document.addEventListener('mouseup', () => {
+      if (isDragging) {
+        isDragging = false;
+        sliderHandle.style.transform = 'translateX(0px)';
+      }
+    });
+
+    document.addEventListener('touchend', () => {
+      if (isDragging) {
+        isDragging = false;
+        sliderHandle.style.transform = 'translateX(0px)';
+      }
+    });
+
+    document.addEventListener('mousemove', (e) => {
+      if (!isDragging) return;
+      let dx = e.clientX - startX;
+      handleSlide(dx);
+    });
+
+    document.addEventListener('touchmove', (e) => {
+      if (!isDragging) return;
+      let dx = e.touches[0].clientX - startX;
+      handleSlide(dx);
+    });
+
+    function handleSlide(dx) {
+      if (dx < 0) dx = 0;
+      if (dx > 200) {
+        unlock();
+        isDragging = false;
+        return;
+      }
+      sliderHandle.style.transform = `translateX(${dx}px)`;
+    }
+
+    function unlock() {
+      lockScreen.style.opacity = '0';
+      lockScreen.style.transform = 'scale(1.1)';
+      setTimeout(() => {
+        lockScreen.style.display = 'none';
+        homeScreen.style.display = 'flex';
+        homeScreen.style.opacity = '0';
+        setTimeout(() => {
+          homeScreen.style.opacity = '1';
+        }, 50);
+      }, 500);
+    }
+
+    function openApp(name) {
+      appTitle.textContent = name;
+      appContent.innerHTML = name === 'Settings'
+        ? `  <div id="settings">
+      <h1>設定</h1>
+      <h2>壁紙を変更</h2>
+      <button onclick="changeWallpaper(1)">壁紙 1</button>
+      <button onclick="changeWallpaper(2)">壁紙 2</button>
+      <button onclick="changeWallpaper(3)">壁紙 3</button>
+    </div>
+        `
+        : name === 'Music'
+        ? `
+          <h2>ミュージック</h2>
+          <ul>
+            <li><button onclick="playMusic('music01.mp3')">曲1を再生</button></li>
+            <li><button onclick="playMusic('music02.mp3')">曲2を再生</button></li>
+          </ul>
+          <audio id="audioPlayer" controls style="width: 100%; margin-top: 10px;"></audio>
+ <p>音楽: <a href="http://ajapabgm.html.xdomain.jp/" target="_blank">ajapaのBGM</a></p>        `
+        : name === 'Game'
+        ? `
+          <h2>ゲーム</h2>
+          <ul>
+            <li><a href="https://soramame72-games.github.io"     target="_blank">games</a></li>
+            <li><a href="https://soramame72-shooting.github.io" target="_blank">東方風シューティング</a></li>
+            <li><a href="https://soramame72-shooting-heard.github.io" target="_blank">東方風シューティング（ハード）</a></li>
+          </ul>
+        `
+        : name === 'Safari'
+        ? `
+          <h2>Safari</h2>
+          <input type="text" id="urlInput" placeholder="https://example.com" style="width: 80%; padding: 5px;" />
+          <button onclick="openURL()">開く</button>
+          <iframe id="browserFrame" src="" style="width: 100%; height: 80%; margin-top: 10px; border: none;"></iframe>
+        `
+        : '';
+      appModal.style.display = 'flex';
+      appModal.style.opacity = '0';
+      appModal.style.transform = 'scale(0.9)';
+      setTimeout(() => {
+        appModal.style.opacity = '1';
+        appModal.style.transform = 'scale(1)';
+      }, 50);
+    }
+
+    function closeApp() {
+      appModal.style.opacity = '0';
+      appModal.style.transform = 'scale(0.9)';
+      setTimeout(() => {
+        appModal.style.display = 'none';
+      }, 300);
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowDown') {
+        document.getElementById('notificationCenter').style.display = 'block';
+      }
+      if (e.key === 'ArrowUp') {
+        document.getElementById('controlCenter').style.display = 'block';
+      }
+      if (e.key === 'Escape') {
+        document.getElementById('notificationCenter').style.display = 'none';
+        document.getElementById('controlCenter').style.display = 'none';
+      }
+    });
+let touchStartY = 0;
+let touchEndY = 0;
+let controlCenterVisible = false;
+let notificationCenterVisible = false;
+
+document.addEventListener('touchstart', (e) => {
+  touchStartY = e.touches[0].clientY;
+});
+
+document.addEventListener('touchend', (e) => {
+  touchEndY = e.changedTouches[0].clientY;
+  handleSwipe();
+});
+
+function handleSwipe() {
+  const diffY = touchEndY - touchStartY;
+
+  // 上から下にスワイプ → 通知センター表示
+  if (diffY > 50 && touchStartY < window.innerHeight * 0.2 && !notificationCenterVisible) {
+    document.getElementById('notificationCenter').style.display = 'block';
+    setTimeout(() => {
+      document.getElementById('notificationCenter').style.transform = 'translateY(0)';
+    }, 10);
+    notificationCenterVisible = true;
+  }
+  // 下から上にスワイプ → コントロールセンター表示
+  else if (diffY < -50 && touchStartY > window.innerHeight * 0.8 && !controlCenterVisible) {
+    document.getElementById('controlCenter').style.display = 'block';
+    setTimeout(() => {
+      document.getElementById('controlCenter').style.transform = 'translateY(0)';
+    }, 10);
+    controlCenterVisible = true;
+  }
+}
+　function playMusic(src) {
+  const player = document.getElementById('audioPlayer');
+  if (player) {
+    player.src = src;
+    player.play();
+  }
+}
+
+function openURL() {
+  const input = document.getElementById('urlInput');
+  const frame = document.getElementById('browserFrame');
+  if (input && frame) {
+    let url = input.value;
+    if (!url.startsWith('http')) {
+      url = 'https://' + url;
+    }
+    frame.src = url;
+  }
+}
+
+function changeWallpaper(wallpaperNumber) {
+  const lockScreen = document.getElementById('lockScreen');
+  const homeScreen = document.getElementById('homeScreen');
+
+  if (wallpaperNumber === 1) {
+    lockScreen.style.backgroundImage = "url('wallpaper-lock.png')";
+    homeScreen.style.backgroundImage = "url('wallpaper-home.png')";
+  } else if (wallpaperNumber === 2) {
+    lockScreen.style.backgroundImage = "url('wallpaper2-lock.png')";
+    homeScreen.style.backgroundImage = "url('wallpaper2-home.png')";
+  } else if (wallpaperNumber === 3) {
+    lockScreen.style.backgroundImage = "url('wallpaper3-lock.png')";
+    homeScreen.style.backgroundImage = "url('wallpaper3-home.png')";
+  }
+}
+// 通知センターまたはコントロールセンターを閉じる
+function closeCenter(center) {
+  center.style.transform = center.id === 'controlCenter' ? 'translateY(100%)' : 'translateY(-100%)';
+  setTimeout(() => {
+    center.style.display = 'none';
+  }, 300); // アニメーションの後に非表示にする
+}
+
+// 通知センターとコントロールセンターを閉じるボタンやタッチイベント
+document.getElementById('controlCenter').addEventListener('click', () => {
+  closeCenter(document.getElementById('controlCenter'));
+  controlCenterVisible = false;
+});
+
+document.getElementById('notificationCenter').addEventListener('click', () => {
+  closeCenter(document.getElementById('notificationCenter'));
+  notificationCenterVisible = false;
+});
+
+  </script>
 </body>
 </html>
