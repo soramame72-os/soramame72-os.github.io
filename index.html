@@ -1,53 +1,94 @@
+<!DOCTYPE html>
 <html>
-<link rel="icon" href="favicon.PNG" type="image/png">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<meta http-equiv="Content-Style-Type" content="text/css">
-<meta name="GENERATOR" content="JustSystems Homepage Builder Version 20.0.6.0 for Windows">
-<title>Launcher</title>
-<style>
-  body {
-    font-family: "Times New Roman", "MS Mincho", serif;
-  }
-  .container {
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-  }
-  .profile {
-    width: 350px;
-  }
-  .news {
-    margin-left: 20px;
-  }
-</style>
+  <meta charset="UTF-8">
+  <link rel="icon" href="favicon.PNG" type="image/png">
+  <title>Launcher</title>
+  <style>
+    body {
+      font-family: "Times New Roman", "MS Mincho", serif;
+      background: #fff;
+      text-align: center;
+    }
+    .container {
+      display: flex;
+      justify-content: center;
+      gap: 100px;
+      margin-top: 40px;
+    }
+    .block {
+      width: 300px;
+    }
+    .block img {
+      width: 300px;
+      height: 300px;
+      background: #ccc;
+    }
+    .release {
+      margin-top: 10px;
+    }
+    .release-title {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    .release hr {
+      width: 100%;
+    }
+    .version:hover {
+      text-decoration: underline;
+    }
+    .new {
+      color: red;
+      font-weight: bold;
+      margin-left: 5px;
+    }
+.version {
+  font-weight: normal;
+  text-decoration: none;
+}
+  </style>
 </head>
-<body background="./index_files/saved_resource" marginwidth="0" marginheight="0">
-<br>
-<h1 align="center">Launcher</h1>
+<body>
+  <h1>Lanuncher</h1>
 
-<div class="container">
-  <div class="profile">
-    <img src="iweb.jpg" width="350" height="414" border="0"><br><br>
-    <table width="256">
-      <tr>
-        <td width="14">&nbsp;</td>
+  <div class="container">
+    <!-- IWEB -->
+    <div class="block">
+      <h2>IWEB</h2>
+      <img src="iweb.jpg" alt="iweb.jpg">
+      <div class="release">
+        <div class="release-title">---release---</div>
+        <hr>
+        <div>
+          <a class="version" href="https://soramame72-os.github.io/iweb1.2" target="_blank">ver1.2</a>
+          <span class="new">NEW!</span><br>
+          Released on April 13, 2025
+        </div><br>
+        <div>
+          <a class="version" href="https://soramame72-os.github.io/iweb1.1" target="_blank">ver1.1</a><br>
+          Released on April 12, 2025
+        </div><br>
+        <div>
+          <a class="version" href="https://soramame72-os.github.io/iweb1.0" target="_blank">ver1.0</a><br>
+          Released on April 12, 2025
+        </div>
+      </div>
+    </div>
 
-  <div class="Release">
-    <div align="center"><strong>--- Release ---</strong></div>
-    <hr width="100%" size="1">
-    <strong>・IWEB</strong><br>
-
-    <a href="https://soramame72-os.github.io/iweb1.2.html" target="_blank">ver1.2</a> <font color="#ff0000">New!</font><br>
-    Released on April 12, 2025<br>
-    
-    <a href="https://soramame72-os.github.io/iweb1.1.html" target="_blank">ver1.1</a> <font color="#ff0000"></font><br>
-    Released on April 12, 2025<br>
-
-    <a href="https://soramame72-os.github.io/iweb1.0.html" target="_blank">ver1.0</a> <font color="#ff0000"></font><br>
-    Released on April 12, 2025<br>
+    <!-- MWEB -->
+    <div class="block">
+      <h2>MWEB</h2>
+      <img src="mweb.jpg" alt="mweb.jpg">
+      <div class="release">
+        <div class="release-title">---release---</div>
+        <hr>
+        <div>
+          <a class="version" href="https://soramame72-os.github.io/mweb1.0" target="_blank">ver1.0 (Developing)</a>
+          <span class="new">NEW!</span><br>
+          Released on April 14, 2025
+        </div>
+      </div>
+    </div>
   </div>
-</div>
-
 </body>
 </html>
